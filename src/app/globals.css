@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+/* Force light mode - no dark mode */
+:root {
+  color-scheme: light;
+}
+
+/* Ensure all text is visible and readable */
+* {
+  color: inherit;
+}
+
+body {
+  background-color: #f9fafb;
+  color: #111827;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Override any dark mode attempts */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #f9fafb;
+    color: #111827;
+  }
+}
