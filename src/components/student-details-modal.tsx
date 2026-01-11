@@ -12,14 +12,20 @@ export function StudentDetailsModal({ student, onClose }: StudentDetailsModalPro
   if (!student) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 p-4 cursor-pointer"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden cursor-default"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="bg-blue-600 text-white px-6 py-4 flex items-center justify-between">
           <h2 className="text-xl font-bold">Chi tiết Sinh viên</h2>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-blue-700 rounded transition-colors"
+            className="p-1 hover:bg-blue-700 rounded transition-colors cursor-pointer"
           >
             <X className="w-6 h-6" />
           </button>
@@ -202,7 +208,7 @@ export function StudentDetailsModal({ student, onClose }: StudentDetailsModalPro
         <div className="bg-gray-50 px-6 py-4 flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+            className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
           >
             Đóng
           </button>

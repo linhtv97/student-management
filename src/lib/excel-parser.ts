@@ -26,6 +26,14 @@ function columnLetterToIndex(letter: string): number {
   return index - 1;
 }
 
+/**
+ * Chuẩn hóa tên môn học: xóa tất cả khoảng trắng (trước, sau, và ở giữa)
+ */
+function normalizeSubjectName(subjectName: string): string {
+  if (!subjectName) return '';
+  return subjectName.replace(/\s+/g, '').trim();
+}
+
 // ==================== PARSE FUNCTIONS ====================
 
 /**
@@ -127,7 +135,7 @@ export function parseBangDiemFull(file: ArrayBuffer): Student[] {
     const colLetter = getColumnLetter(col);
     const subjectName = getCellValue(worksheet, `${colLetter}7`);
     if (subjectName && subjectName.trim()) {
-      subjects.push(subjectName.trim());
+      subjects.push(normalizeSubjectName(subjectName));
     }
   }
   
@@ -174,7 +182,7 @@ export function parseBangDiemFull(file: ArrayBuffer): Student[] {
       if (gradeString && gradeString.trim()) {
         const parsedGrade = parseGrades(gradeString);
         if (parsedGrade) {
-          parsedGrade.subjectName = subjects[subjectIndex];
+          parsedGrade.subjectName = normalizeSubjectName(subjects[subjectIndex]);
           grades.push(parsedGrade);
         }
       }
@@ -240,7 +248,7 @@ export function parseBangDangKiMon(file: ArrayBuffer): CourseRegistration[] {
     const colLetter = getColumnLetter(col);
     const subjectName = getCellValue(worksheet, `${colLetter}2`);
     if (subjectName && subjectName.trim()) {
-      subjects.push(subjectName.trim());
+      subjects.push(normalizeSubjectName(subjectName));
     }
   }
   
@@ -295,7 +303,7 @@ export function parseBangDangKiMon(file: ArrayBuffer): CourseRegistration[] {
         (enrollmentStatus.includes('Đ.ký | Đã duyệt') ||
           enrollmentStatus.includes('Đ.ký mới (Add) | Đã duyệt'))
       ) {
-        registeredSubjects.push(subjects[subjectIndex]);
+        registeredSubjects.push(normalizeSubjectName(subjects[subjectIndex]));
       }
     }
     

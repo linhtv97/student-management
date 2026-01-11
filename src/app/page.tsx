@@ -10,7 +10,7 @@ import { StatsCards } from '@/components/stats-cards';
 import { ConsolidatedStats } from '@/components/consolidated-stats';
 import { DebugPanel } from '@/components/debug-panel';
 import { db } from '@/lib/db';
-import { exportRetakeStudents, exportAllStudents, exportConsolidatedRetake, exportConsolidatedAll, exportConsolidatedDetailed } from '@/lib/export-utils';
+import { exportRetakeStudents, exportAllStudents, exportConsolidatedRetake, exportConsolidatedAll, exportConsolidatedDetailed, exportConsolidatedNotRegistered, exportSubjectNotRegisteredStats } from '@/lib/export-utils';
 import { consolidateData } from '@/types/consolidated';
 import { GraduationCap, Trash2, Download, FileWarning, ChevronDown, ChevronUp } from 'lucide-react';
 
@@ -104,14 +104,14 @@ export default function Home() {
                   <>
                     <button
                       onClick={handleExportRetake}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-600 text-white text-sm rounded-lg hover:bg-orange-700 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-600 text-white text-sm rounded-lg hover:bg-orange-700 transition-colors cursor-pointer"
                     >
                       <FileWarning className="w-3.5 h-3.5" />
                       Export học lại
                     </button>
                     <button
                       onClick={handleExportAll}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors cursor-pointer"
                     >
                       <Download className="w-3.5 h-3.5" />
                       Export tất cả
@@ -122,21 +122,35 @@ export default function Home() {
                   <>
                     <button
                       onClick={() => exportConsolidatedRetake(consolidatedData)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-600 text-white text-sm rounded-lg hover:bg-orange-700 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-600 text-white text-sm rounded-lg hover:bg-orange-700 transition-colors cursor-pointer"
                     >
                       <FileWarning className="w-3.5 h-3.5" />
                       Export môn ĐK học lại
                     </button>
                     <button
+                      onClick={() => exportConsolidatedNotRegistered(consolidatedData, students || undefined, courseRegistrations || undefined)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-600 text-white text-sm rounded-lg hover:bg-yellow-700 transition-colors cursor-pointer"
+                    >
+                      <FileWarning className="w-3.5 h-3.5" />
+                      Export môn chưa ĐK & chưa điểm
+                    </button>
+                    <button
+                      onClick={() => exportSubjectNotRegisteredStats(consolidatedData)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition-colors cursor-pointer"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      Thống kê môn chưa ĐK & chưa điểm
+                    </button>
+                    <button
                       onClick={() => exportConsolidatedDetailed(consolidatedData)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
                     >
                       <Download className="w-3.5 h-3.5" />
                       Export chi tiết
                     </button>
                     <button
                       onClick={() => exportConsolidatedAll(consolidatedData)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors cursor-pointer"
                     >
                       <Download className="w-3.5 h-3.5" />
                       Export tổng hợp
@@ -145,7 +159,7 @@ export default function Home() {
                 )}
                 <button
                   onClick={handleClearData}
-                  className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors cursor-pointer"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   Xóa tất cả
@@ -163,7 +177,7 @@ export default function Home() {
           <div className="mb-4">
             <button
               onClick={() => setShowUpload(!showUpload)}
-              className="flex items-center gap-2 px-3 py-1.5 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200"
+              className="flex items-center gap-2 px-3 py-1.5 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 cursor-pointer"
             >
               {showUpload ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
               <span className="text-xs font-semibold text-gray-700">
@@ -197,7 +211,7 @@ export default function Home() {
           <div className="mb-3 flex items-center gap-1 bg-white rounded-lg shadow-sm border border-gray-200 p-1">
             <button
               onClick={() => setActiveTab('bang-diem')}
-              className={`flex-1 px-4 py-2 text-sm font-semibold rounded-md transition-all ${
+              className={`flex-1 px-4 py-2 text-sm font-semibold rounded-md transition-all cursor-pointer ${
                 activeTab === 'bang-diem'
                   ? 'bg-blue-600 text-white shadow-sm'
                   : 'text-gray-600 hover:bg-gray-100'
@@ -214,7 +228,7 @@ export default function Home() {
             </button>
             <button
               onClick={() => setActiveTab('dang-ky-mon')}
-              className={`flex-1 px-4 py-2 text-sm font-semibold rounded-md transition-all ${
+              className={`flex-1 px-4 py-2 text-sm font-semibold rounded-md transition-all cursor-pointer ${
                 activeTab === 'dang-ky-mon'
                   ? 'bg-blue-600 text-white shadow-sm'
                   : 'text-gray-600 hover:bg-gray-100'
@@ -232,7 +246,7 @@ export default function Home() {
             {consolidatedData.length > 0 && (
               <button
                 onClick={() => setActiveTab('tong-hop')}
-                className={`flex-1 px-4 py-2 text-sm font-semibold rounded-md transition-all ${
+                className={`flex-1 px-4 py-2 text-sm font-semibold rounded-md transition-all cursor-pointer ${
                   activeTab === 'tong-hop'
                     ? 'bg-purple-600 text-white shadow-sm'
                     : 'text-gray-600 hover:bg-gray-100'

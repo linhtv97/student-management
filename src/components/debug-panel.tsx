@@ -26,7 +26,7 @@ export function DebugPanel({ students }: DebugPanelProps) {
         {/* Header */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full px-4 py-2 bg-gray-800 hover:bg-gray-700 transition-colors flex items-center justify-between"
+          className="w-full px-4 py-2 bg-gray-800 hover:bg-gray-700 transition-colors flex items-center justify-between cursor-pointer"
         >
           <span className="text-sm font-semibold flex items-center gap-2">
             <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-500 text-xs">

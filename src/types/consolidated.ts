@@ -50,16 +50,24 @@ export function consolidateData(
 ): ConsolidatedStudent[] {
   const consolidated: ConsolidatedStudent[] = [];
   
+  // Lấy tất cả môn từ tất cả sinh viên (từ bảng điểm) để đảm bảo bao gồm tất cả môn
+  const allSubjectsFromAllStudents = new Set<string>();
+  students.forEach(s => {
+    s.grades.forEach(g => allSubjectsFromAllStudents.add(g.subjectName));
+  });
+  
   // Process từng registration
   for (const reg of registrations) {
     const matchedStudent = matchStudent(reg, students);
     
-    // Lấy tất cả môn unique (từ cả đăng ký và điểm)
+    // Lấy tất cả môn unique (từ cả đăng ký, điểm của sinh viên này, VÀ tất cả môn từ bảng điểm)
     const allSubjects = new Set<string>();
     reg.registeredSubjects.forEach(s => allSubjects.add(s));
     if (matchedStudent) {
       matchedStudent.grades.forEach(g => allSubjects.add(g.subjectName));
     }
+    // Thêm tất cả môn từ bảng điểm để đảm bảo có đầy đủ môn
+    allSubjectsFromAllStudents.forEach(s => allSubjects.add(s));
     
     // Tạo thông tin tổng hợp cho từng môn
     const registeredWithGrades = Array.from(allSubjects).map(subject => {

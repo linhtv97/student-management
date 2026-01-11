@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import {
   useReactTable,
   getCoreRowModel,
@@ -11,7 +11,7 @@ import {
   type ColumnDef,
   type SortingState,
 } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight, Search, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, ChevronsLeft, ChevronsRight, Copy, Check } from 'lucide-react';
 import { StudentDetailsModal } from './student-details-modal';
 import type { Student } from '@/types/student';
 
@@ -33,6 +33,18 @@ export function StudentTable({ students }: StudentTableProps) {
   const [globalFilter, setGlobalFilter] = useState('');
   const [pageSize, setPageSize] = useState(50);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const [copiedValue, setCopiedValue] = useState<string | null>(null);
+
+  const handleCopy = useCallback(async (value: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent row click
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopiedValue(value);
+      setTimeout(() => setCopiedValue(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  }, []);
 
   // Lấy tất cả subjects từ students
   const allSubjects = useMemo(() => {
@@ -51,20 +63,77 @@ export function StudentTable({ students }: StudentTableProps) {
         {
           accessorKey: 'troyId',
           header: 'ID TROY',
-          cell: (info) => <span className="text-sm">{String(info.getValue())}</span>,
+          cell: (info) => {
+            const value = String(info.getValue());
+            const isCopied = copiedValue === value;
+            return (
+              <div className="flex items-center gap-1.5 group/cell">
+                <span className="text-sm">{value}</span>
+                <button
+                  onClick={(e) => handleCopy(value, e)}
+                  className="opacity-0 group-hover/cell:opacity-100 transition-opacity p-0.5 hover:bg-gray-200 rounded cursor-pointer"
+                  title="Copy"
+                >
+                  {isCopied ? (
+                    <Check className="w-3.5 h-3.5 text-green-600" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5 text-gray-500" />
+                  )}
+                </button>
+              </div>
+            );
+          },
           size: 110,
         },
         {
           accessorKey: 'vnuId',
           header: 'ID VNU',
-          cell: (info) => <span className="text-sm font-medium">{String(info.getValue())}</span>,
+          cell: (info) => {
+            const value = String(info.getValue());
+            const isCopied = copiedValue === value;
+            return (
+              <div className="flex items-center gap-1.5 group/cell">
+                <span className="text-sm font-medium">{value}</span>
+                <button
+                  onClick={(e) => handleCopy(value, e)}
+                  className="opacity-0 group-hover/cell:opacity-100 transition-opacity p-0.5 hover:bg-gray-200 rounded cursor-pointer"
+                  title="Copy"
+                >
+                  {isCopied ? (
+                    <Check className="w-3.5 h-3.5 text-green-600" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5 text-gray-500" />
+                  )}
+                </button>
+              </div>
+            );
+          },
           size: 120,
           meta: { isSticky: true, stickyLeft: 0 },
         },
         {
           accessorKey: 'fullName',
           header: 'Họ và Tên',
-          cell: (info) => <span className="text-sm font-semibold">{String(info.getValue())}</span>,
+          cell: (info) => {
+            const value = String(info.getValue());
+            const isCopied = copiedValue === value;
+            return (
+              <div className="flex items-center gap-1.5 group/cell">
+                <span className="text-sm font-semibold">{value}</span>
+                <button
+                  onClick={(e) => handleCopy(value, e)}
+                  className="opacity-0 group-hover/cell:opacity-100 transition-opacity p-0.5 hover:bg-gray-200 rounded cursor-pointer"
+                  title="Copy"
+                >
+                  {isCopied ? (
+                    <Check className="w-3.5 h-3.5 text-green-600" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5 text-gray-500" />
+                  )}
+                </button>
+              </div>
+            );
+          },
           size: 200,
           meta: { isSticky: true, stickyLeft: 120 },
         },
@@ -115,7 +184,7 @@ export function StudentTable({ students }: StudentTableProps) {
 
       return [...baseColumns, ...subjectColumns];
     },
-    [allSubjects]
+    [allSubjects, copiedValue, handleCopy]
   );
 
   const table = useReactTable({
@@ -284,7 +353,7 @@ export function StudentTable({ students }: StudentTableProps) {
           <button
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
-            className="p-1 rounded hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="p-1 rounded hover:bg-gray-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             title="Trang đầu"
           >
             <ChevronsLeft className="w-4 h-4" />
@@ -292,7 +361,7 @@ export function StudentTable({ students }: StudentTableProps) {
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="p-1 rounded hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="p-1 rounded hover:bg-gray-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             title="Trang trước"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -303,7 +372,7 @@ export function StudentTable({ students }: StudentTableProps) {
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="p-1 rounded hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="p-1 rounded hover:bg-gray-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             title="Trang sau"
           >
             <ChevronRight className="w-4 h-4" />
@@ -311,7 +380,7 @@ export function StudentTable({ students }: StudentTableProps) {
           <button
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
-            className="p-1 rounded hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="p-1 rounded hover:bg-gray-200 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             title="Trang cuối"
           >
             <ChevronsRight className="w-4 h-4" />
